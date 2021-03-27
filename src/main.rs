@@ -1,30 +1,22 @@
-mod test;
-mod gol;
-
-use std::collections::HashMap;
-use gol::gol::{Coordinate, Cell, bring_to_life, next};
-use std::thread::sleep;
-use std::time::Duration;
+use gameofrust::parse::{parse_world};
+use std::io;
 
 fn main() {
-    let mut game: HashMap<Coordinate, Cell> = HashMap::new();
-    let mut game_prime: HashMap<Coordinate, Cell> = HashMap::new();
+    let mut world = parse_world(
+                "......\n\
+                       ...0..\n\
+                       .0.0..\n\
+                       ..00..");
 
-    let buddies = [
-        Coordinate { x: 4, y: 2 },
-        Coordinate { x: 2, y: 3 },
-        Coordinate { x: 4, y: 3 },
-        Coordinate { x: 3, y: 4 },
-        Coordinate { x: 4, y: 4 }];
+    let mut input = String::new();
 
-    buddies.iter().for_each(|b| bring_to_life(&mut game, &b));
-
-    fn game_loop (g: &mut HashMap<Coordinate, Cell>, gg: &mut HashMap<Coordinate, Cell>) {
-        next(g, gg);
-        println!("{:?}", gg.keys());
-        g.clear();
-        game_loop(gg, g);
+    loop {
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {
+                println!("{:?}", world);
+                world.next();
+            }
+            Err(error) => println!("error: {}", error),
+        }
     }
-
-    game_loop(&mut game, &mut game_prime);
 }
